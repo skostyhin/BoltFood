@@ -23,7 +23,5 @@ public with sharing class ExpenseItemsUpdateBatch implements Database.Batchable<
         ExpenseItemHandler.skip = true;
         update items;
     }
-    public void finish(Database.BatchableContext bc){
-        new ExpenseService().updateExpense(this.expenseIds);
-    }
+    public void finish(Database.BatchableContext bc){}
 }

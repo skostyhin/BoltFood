@@ -3,6 +3,7 @@ public with sharing class OverdueTaskTest {
 
     @isTest
     static void testBatchExecution() {
+        TaskService.skipForTest = true;
         List<Task> tasks = new List<Task>{
             new Task(Subject='Past Due', ActivityDate=Date.today().addDays(-1), Status='Not Started'),
             new Task(Subject='Future Due', ActivityDate=Date.today().addDays(1), Status='Not Started'),

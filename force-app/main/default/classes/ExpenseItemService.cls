@@ -74,38 +74,26 @@ public with sharing class ExpenseItemService {
         return uniqueIds;
     }
 
-    private void updateExpense() {
-        this.prepareExpensesByAmount();
-        this.prepareExpensesByApproved();
+    private void updateExpense() {        
+        Set<Id> expenseIds = this.getUniqueExpenseIds();        
+        if (!expenseIds.isEmpty()) {            
+            Set<Id> approvedIds = this.getExpensiveIdsByApprove(expenseIds, true);
+            Set<Id> nonApprovedIds = this.getExpensiveIdsByApprove(expenseIds, false);
+            
+            for (Id expenseId : expenseIds) {
+                
+                this.expensesToUpdate.put(
+                    expenseId, 
+                    new Expense__c(
+                        Id = expenseId,
+                        All_Approved__c = approvedIds.contains(expenseId) && !nonApprovedIds.contains(expenseId)
+                    )
+                );                    
+            }         
+        } 
         
         ExpenseHandler.skip = true;
         update this.expensesToUpdate.values();
-    }
-
-    private void prepareExpensesByAmount() {
-        
-        this.removeEmptyAmounts();
-        if (!this.approvedAmountsById.isEmpty()) {            
-            List<Expense__c> expenses = [
-                SELECT Id, Total_Amount__c 
-                FROM Expense__c 
-                WHERE Id IN :this.approvedAmountsById.keySet()
-            ];        
-
-            for (Expense__c expense : expenses) {                
-                Decimal currentAmount = expense.Total_Amount__c == null ? 0 : expense.Total_Amount__c;
-                Decimal additionalAmount = this.approvedAmountsById.get(expense.Id);
-                Decimal newAmount = currentAmount + additionalAmount;
-                this.expensesToUpdate.put(expense.Id, 
-                    new Expense__c(
-                        Id = expense.Id,
-                        Total_Amount__c  = newAmount
-                    )
-                );                
-            }
-            
-        }
-        
     }
 
     private Set<Id> getExpensiveIdsByApprove(Set<Id> expenseIds, Boolean approved) {
@@ -124,44 +112,5 @@ public with sharing class ExpenseItemService {
         }    
         return resultIds;
 
-    }
-
-    private void prepareExpensesByApproved() {
-       
-        Set<Id> expenseIds = this.getUniqueExpenseIds();        
-        if (!expenseIds.isEmpty()) {            
-            Set<Id> approvedIds = this.getExpensiveIdsByApprove(expenseIds, true);
-            Set<Id> nonApprovedIds = this.getExpensiveIdsByApprove(expenseIds, false);
-            
-            for (Id expenseId : expenseIds) {
-                Expense__c expense;
-                if (this.expensesToUpdate.containsKey(expenseId)) {
-                    expense = this.expensesToUpdate.get(expenseId);
-                } else {
-                    expense = new Expense__c(Id = expenseId);
-                }
-                if (approvedIds.contains(expenseId) && !nonApprovedIds.contains(expenseId)) {
-                    expense.All_Approved__c = true;
-                } else {
-                    expense.All_Approved__c = false;                        
-                }
-                this.expensesToUpdate.put(expenseId, expense);                    
-            }         
-        }        
-    }
-
-    private void removeEmptyAmounts() {
-        Set<Id> expenseIdsWithEmptyAmount = new Set<Id>();
-                
-        for (Id expenseId : this.approvedAmountsById.keySet()) {
-            if (this.approvedAmountsById.get(expenseId) == 0) {
-                expenseIdsWithEmptyAmount.add(expenseId);
-            }
-        }
-        if (!expenseIdsWithEmptyAmount.isEmpty()) {
-            for (Id expenseId : expenseIdsWithEmptyAmount) {
-                this.approvedAmountsById.remove(expenseId);
-            }
-        }
     }
 }
