@@ -213,10 +213,8 @@ public with sharing class ExpenseTest {
         }
         insert items;
 
-        Set<Id> nonApprovedExpenseIds = new Set<Id>();
         for (Expense__c expense : expenses) {
-            expense.All_Approved__c = FALSE;            
-            nonApprovedExpenseIds.add(expense.Id);
+            expense.All_Approved__c = FALSE;                        
         }
 
         Test.startTest();
@@ -264,10 +262,8 @@ public with sharing class ExpenseTest {
         }
         insert items;
 
-        Set<Id> nonApprovedExpenseIds = new Set<Id>();
         for (Expense__c expense : expenses) {
             expense.All_Approved__c = TRUE;            
-            nonApprovedExpenseIds.add(expense.Id);
         }
 
         Test.startTest();

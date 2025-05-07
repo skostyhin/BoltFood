@@ -1,18 +1,17 @@
-# Salesforce DX Project: Next Steps
+In my solutions I use clear Apex without any framework. 
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+# Implement Salesforce Triggers for Expense Management
 
-## How Do You Plan to Deploy Your Changes?
+1. I changed a Total_Amount__c field type from Number to Roll-Up Summary cause it make necessary condition in more simple way.
+2. I use batch for a case of a lot Expense_Item__c records. Some batch instance can fault. It is a part of solution for a big records count. Optional we can add error notification. We can use standard DML update without batch in case under limitation record counts.
+3. I use AggregateResult because better to have a 2000 limit of group records instead of 50000 for all.
+4. Also we can additionally add 2 Roll-Up Summary field and formula to calculate count of all related records and count of approved related records.
+5. In the ExpanseBatch, I prefer to use 2 batches to split approved and non-approved records
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+# Making Open Tasks Overdue
 
-## Configure Your Salesforce DX Project
-
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
-
-## Read All About It
-
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+Task can be overdue in two ways:
+1. We update fields (change status or date). We can use ApexTrigger or Triggered Flow.
+We can use Flow. But to show Apex code I chosen Apex Trigger.
+2. Date changed by itself. We can use Scheduler or Schedule Flow.
+For a weekly or monthly schedule we can use Flow. For per day schedule we have to use Scheduler and Batch.
