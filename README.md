@@ -1,4 +1,4 @@
-In my solutions I use clear Apex without any framework. 
+In my solutions I use clear Apex without any framework to show my vision without ready-made third-party tools.
 
 # Implement Salesforce Triggers for Expense Management
 
@@ -7,6 +7,7 @@ In my solutions I use clear Apex without any framework.
 3. I use AggregateResult because better to have a 2000 limit of group records instead of 50000 for all.
 4. Also we can additionally add 2 Roll-Up Summary field and formula to calculate count of all related records and count of approved related records.
 5. In the ExpanseBatch, I prefer to use 2 batches to split approved and non-approved records
+6. In separate branch https://github.com/skostyhin/BoltFood/tree/Amount-as-Number I made Total_Amount__c recalculation for Numeric type. But, cause of the task did not ask about the reaction to change the amount in the record, this part is not in that solution.
 
 # Making Open Tasks Overdue
 

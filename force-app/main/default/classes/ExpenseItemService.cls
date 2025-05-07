@@ -6,7 +6,7 @@ public with sharing class ExpenseItemService {
     private Map<Id, Expense__c> expensesToUpdate = new Map<Id, Expense__c>();
     private Set<Id> deletedIds = new Set<Id>();
    
-    public void updateExpense(List<Expense_Item__c> newExpenseItems) {
+    public void recalculateExpenseApprovedFlag(List<Expense_Item__c> newExpenseItems) {
 
         for (Expense_Item__c item : newExpenseItems) {
             this.addApproved(item.Expense__c, item.Approved__c);
@@ -15,10 +15,10 @@ public with sharing class ExpenseItemService {
             }             
         }
         
-        this.updateExpense();                
+        this.updateExpenseApprovedFlag();                
     }
 
-    public void updateExpense(List<Expense_Item__c> newExpenseItems, Map<Id, Expense_Item__c> oldExpenseItemsById) {
+    public void recalculateExpenseApprovedFlag(List<Expense_Item__c> newExpenseItems, Map<Id, Expense_Item__c> oldExpenseItemsById) {
         
         for (Expense_Item__c item : newExpenseItems) {            
             this.addApproved(item.Expense__c, item.Approved__c);
@@ -27,11 +27,11 @@ public with sharing class ExpenseItemService {
             }                        
         }
         
-        this.updateExpense();
+        this.updateExpenseApprovedFlag();
         
     }
     
-    public void updateExpenseOnDelete(List<Expense_Item__c> oldExpenseItems) {
+    public void recalculateExpenseApprovedFlagOnDelete(List<Expense_Item__c> oldExpenseItems) {
 
         for (Expense_Item__c item : oldExpenseItems) {
             this.addApproved(item.Expense__c, false);
@@ -41,7 +41,7 @@ public with sharing class ExpenseItemService {
             }             
         }
         
-        this.updateExpense();
+        this.updateExpenseApprovedFlag();
         
     }
 
@@ -74,11 +74,11 @@ public with sharing class ExpenseItemService {
         return uniqueIds;
     }
 
-    private void updateExpense() {        
+    private void updateExpenseApprovedFlag() {        
         Set<Id> expenseIds = this.getUniqueExpenseIds();        
         if (!expenseIds.isEmpty()) {            
-            Set<Id> approvedIds = this.getExpensiveIdsByApprove(expenseIds, true);
-            Set<Id> nonApprovedIds = this.getExpensiveIdsByApprove(expenseIds, false);
+            Set<Id> approvedIds = this.getExpensiveIdsByApproveFlag(expenseIds, true);
+            Set<Id> nonApprovedIds = this.getExpensiveIdsByApproveFlag(expenseIds, false);
             
             for (Id expenseId : expenseIds) {
                 
@@ -92,11 +92,11 @@ public with sharing class ExpenseItemService {
             }         
         } 
         
-        ExpenseHandler.skip = true;
+        ExpenseHandler.skipExpenseItemsUpdate = true;
         update this.expensesToUpdate.values();
     }
 
-    private Set<Id> getExpensiveIdsByApprove(Set<Id> expenseIds, Boolean approved) {
+    private Set<Id> getExpensiveIdsByApproveFlag(Set<Id> expenseIds, Boolean approved) {
         Set<Id> resultIds = new Set<Id>();
         AggregateResult[] groupedResults = [
                 SELECT Expense__c

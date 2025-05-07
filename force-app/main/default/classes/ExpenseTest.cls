@@ -218,7 +218,7 @@ public with sharing class ExpenseTest {
         }
 
         Test.startTest();
-            ExpenseHandler.skip = false;
+            ExpenseHandler.skipExpenseItemsUpdate = false;
             update expenses;            
         Test.stopTest();
         
@@ -267,7 +267,7 @@ public with sharing class ExpenseTest {
         }
 
         Test.startTest();
-            ExpenseHandler.skip = false;
+            ExpenseHandler.skipExpenseItemsUpdate = false;
             update expenses;
         Test.stopTest();
         

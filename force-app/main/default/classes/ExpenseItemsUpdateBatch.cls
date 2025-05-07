@@ -20,7 +20,7 @@ public with sharing class ExpenseItemsUpdateBatch implements Database.Batchable<
         for (Expense_Item__c item : items) {
             item.Approved__c = this.approved;   
         }
-        ExpenseItemHandler.skip = true;
+        ExpenseItemHandler.skipExpenseRecalculating = true;
         update items;
     }
     public void finish(Database.BatchableContext bc){}
